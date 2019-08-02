@@ -1,0 +1,59 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "5531bc8c7ccd868fffee99759c6f19d6",
+    "packages": [
+        {
+            "name": "eternalphp/framework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eternalphp/framework.git",
+                "reference": "9756a9319766f5c14703ed5227f5e6f6ed07ddac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eternalphp/framework/zipball/9756a9319766f5c14703ed5227f5e6f6ed07ddac",
+                "reference": "9756a9319766f5c14703ed5227f5e6f6ed07ddac",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "framework\\Database\\Connection\\": "src/framework/Database/Connection/",
+                    "framework\\Database\\Schema\\": "src/framework/Database/Schema/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "yuanzhongyi",
+                    "email": "kld230@163.com"
+                }
+            ],
+            "description": "eternalphp/framework",
+            "time": "2019-08-02T05:13:11+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "eternalphp/framework": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.6"
+    },
+    "platform-dev": []
+}
