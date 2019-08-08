@@ -44,12 +44,15 @@ class phpWord{
 			
 			foreach($tables as $k=>$table){
 				
-				$title = sprintf("%d、%s",$k+1,$table->getComment());
+				$title = sprintf("%d、%s ",$k+1,$table->getComment());
 				
-				$wordControl->createSection(function($wordSection) use ($title){
+				$wordControl->createSection(function($wordSection) use ($title,$table){
 					$wordSection->pStyle();
 					$wordSection->createText(function($wordText) use ($title){
 						$wordText->text($title)->font("微软雅黑")->size($wordText->getFontSize("二号"))->bold();
+					});
+					$wordSection->createText(function($wordText) use ($table){
+						$wordText->text(sprintf("(%s)",$table->getName()))->font("微软雅黑")->size($wordText->getFontSize("五号"))->bold();
 					});
 				});
 				
@@ -111,7 +114,11 @@ class phpWord{
 									$wordTableCell->width(1000);
 									$wordTableCell->createSection(function($wordSection){
 										$wordSection->createText(function($wordText){
-											$wordText->text($this->field->getName())->color("#ff0000");
+											if($this->field->getAlias() != null){
+												$wordText->text($this->field->getAlias())->color("#ff0000");
+											}else{
+												$wordText->text($this->field->getName())->color("#ff0000");
+											}
 										});
 									});
 								});

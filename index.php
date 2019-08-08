@@ -22,11 +22,14 @@ $control->displayMessage();
 //管理员帐号
 $control->create("admin",function($table){
 	$table->integer("userid")->unsigned()->increments();
+	$table->string("username",30)->comment("用户名");
+	$table->string("password",50)->comment("用户密码");
 	$table->string("name",50)->comment("姓名");
 	$table->string("mobile",20)->comment("手机号");
+	$table->integer("creater")->comment("创建人");
 	$table->datetime("createtime")->nullable();
 	$table->timestamp("updatetime");
-	$table->tinyInt("isdelete")->defaultVal(1);
+	$table->tinyInt("isdelete");
 	$table->comment("管理员帐号");
 });
 
@@ -42,9 +45,9 @@ $control->create("admin_project",function($table){
 //项目分类
 $control->create("category",function($table){
 	$table->integer("catid")->unsigned()->increments();
-	$table->string("name",100)->comment("分类名称");
-	$table->string("code",10)->comment("分类编号");
-	$table->integer("userid")->comment("创建人");
+	$table->string("name",100)->comment("项目分类名称");
+	$table->string("code",10)->comment("项目分类编号");
+	$table->integer("userid")->alias("creater")->comment("创建人");
 	$table->datetime("createtime")->comment("创建时间");
 	$table->timestamp("updatetime")->comment("更新时间");
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
@@ -58,7 +61,7 @@ $control->create("project",function($table){
 	$table->string("title",100)->comment("项目名称");
 	$table->string("code",100)->comment("项目编号");
 	$table->string("description",200)->comment("项目介绍");
-	$table->integer("userid")->comment("创建人");
+	$table->integer("userid")->alias("creater")->comment("创建人");
 	$table->datetime("createtime")->comment("创建时间");
 	$table->datetime("starttime")->nullable()->comment("开始时间");
 	$table->datetime("endtime")->nullable()->comment("完成时间");
@@ -76,7 +79,7 @@ $control->create("examine",function($table){
 	$table->integer("projectid")->comment("所属项目");
 	$table->string("title",200)->comment("问卷标题");
 	$table->string("description",200)->comment("问卷介绍");
-	$table->integer("userid")->comment("创建人");
+	$table->integer("userid")->alias("creater")->comment("创建人");
 	$table->datetime("createtime")->comment("创建时间");
 	$table->tinyInt("status")->comment("问卷状态：0:草稿，1:已上架,2: 已下架");
 	$table->timestamp("updatetime")->comment("更新时间");
@@ -149,7 +152,7 @@ $control->create("question_logic_rules",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->integer("inputItemIndex")->comment("选项序号");
-	$table->integer("skipModele")->comment("跳转到模块");
+	$table->integer("skipModule")->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("问题逻辑规则设置");
 });

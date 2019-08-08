@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eternalphp/framework.git",
-                "reference": "ccf0671cf3de3b8eee5358514e46643000f9e213"
+                "reference": "440c1c47e3fc04ea65f980add778fcef0a3f70f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eternalphp/framework/zipball/ccf0671cf3de3b8eee5358514e46643000f9e213",
-                "reference": "ccf0671cf3de3b8eee5358514e46643000f9e213",
+                "url": "https://api.github.com/repos/eternalphp/framework/zipball/440c1c47e3fc04ea65f980add778fcef0a3f70f4",
+                "reference": "440c1c47e3fc04ea65f980add778fcef0a3f70f4",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2019-08-07T10:27:15+00:00"
+            "time": "2019-08-08T04:28:21+00:00"
         },
         {
             "name": "eternalphp/wordcontrol",
@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eternalphp/wordControl.git",
-                "reference": "e2f27832bae359da1707f61fa2d03513b000ea46"
+                "reference": "32004490475d3682e7121e2c5925ab78c1f635e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eternalphp/wordControl/zipball/e2f27832bae359da1707f61fa2d03513b000ea46",
-                "reference": "e2f27832bae359da1707f61fa2d03513b000ea46",
+                "url": "https://api.github.com/repos/eternalphp/wordControl/zipball/32004490475d3682e7121e2c5925ab78c1f635e3",
+                "reference": "32004490475d3682e7121e2c5925ab78c1f635e3",
                 "shasum": ""
             },
             "require": {
@@ -81,7 +81,7 @@
                 }
             ],
             "description": "wordControl,phpWord",
-            "time": "2019-08-06T16:37:28+00:00"
+            "time": "2019-08-08T04:33:27+00:00"
         }
     ],
     "packages-dev": [],
