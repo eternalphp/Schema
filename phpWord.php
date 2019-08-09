@@ -41,10 +41,10 @@ class phpWord{
 				});
 			});
 			
-			
+			$index = 1;
 			foreach($tables as $k=>$table){
 				
-				$title = sprintf("%d、%s ",$k+1,$table->getComment());
+				$title = sprintf("%d、%s ",$index,$table->getComment());
 				
 				$wordControl->createSection(function($wordSection) use ($title,$table){
 					$wordSection->pStyle();
@@ -156,6 +156,8 @@ class phpWord{
 						$wordText->text("");
 					});
 				});
+				
+				$index++;
 				
 			}
 		}
