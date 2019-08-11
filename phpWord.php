@@ -6,6 +6,14 @@ use wordControl\wordStyle;
 
 class phpWord{
 	
+	private $filename;
+	private $title;
+	
+	public function __construct($filename,$title){
+		$this->filename = $filename;
+		$this->title = $title;
+	}
+	
 	public function create($tables){
 		if($tables){
 			
@@ -16,7 +24,7 @@ class phpWord{
 			$wordControl->createSection(function($wordSection){
 				$wordSection->align("center");
 				$wordSection->createText(function($wordText){
-					$wordText->text("DIF数据库规范文档")->size($wordText->getFontSize("二号"))->font("微软雅黑")->spacing(0)->bold();
+					$wordText->text($this->title)->size($wordText->getFontSize("二号"))->font("微软雅黑")->spacing(0)->bold();
 				});
 			});
 
@@ -162,7 +170,7 @@ class phpWord{
 			}
 		}
 
-		$wordControl->createXML()->save("dif.docx");
+		$wordControl->createXML()->save($this->filename);
 	}
 }
 
