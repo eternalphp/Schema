@@ -23,14 +23,69 @@ $control->displayMessage();
 $control->create("admin",function($table){
 	$table->integer("userid")->unsigned()->increments();
 	$table->string("username",30)->comment("用户名");
-	$table->string("password",50)->comment("用户密码");
+	$table->string("password",128)->comment("用户密码");
 	$table->string("name",50)->comment("姓名");
 	$table->string("mobile",20)->comment("手机号");
 	$table->integer("creater")->comment("创建人");
+	$table->integer("last_login")->comment("上次登录");
+	$table->tinyInt("try_time")->comment("尝试次数");
+	$table->string("last_ip",20)->comment("登录ip");
+	$table->tinyInt("status")->comment("账号状态 1:正常 2:禁止登陆");
 	$table->datetime("createtime")->nullable()->comment("创建时间");
 	$table->timestamp("updatetime")->comment("更新时间");
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
 	$table->comment("管理员帐号");
+});
+
+
+//管理员操作日志
+$control->create("admin_log",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("userid")->comment("用户userid");
+	$table->string("operator",64)->comment("操作人");
+	$table->string("ip",64)->comment("ip地址");
+	$table->string("func",100)->comment("操作的权限点");
+	$table->text("url")->comment("访问地址");
+	$table->string("remark",255)->comment("备注");
+	$table->text("details")->comment("详情");
+	$table->tinyInt("type")->defaultVal(1)->comment("类型 1日志 2错误 3警告");
+	$table->datetime("createtime")->comment("创建时间");
+	$table->comment("管理员操作日志");
+});
+
+//菜单管理
+$control->create("menu",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->string("name",128)->comment("菜单名称");
+	$table->string("title",128)->comment("名称");
+	$table->tinyInt("type")->defaultVal(1)->comment("类型");
+	$table->text("url")->comment("访问地址");
+	$table->tinyInt("status")->defaultVal(1)->comment("1 启用; 0 禁用");
+	$table->tinyInt("menu")->defaultVal(1)->comment("1 作为菜单显示; 0 不显示");
+	$table->string("condition",255)->comment("");
+	$table->integer("pid")->comment("父级ID");
+	$table->string("remark",255)->comment("备注");
+	$table->string("icon",100)->comment("菜单的图标");
+	$table->integer("sort")->comment("菜单排序");
+	$table->tinyInt("isdelete")->comment("是否逻辑删除");
+	$table->comment("菜单管理");
+});
+
+//角色管理
+$control->create("role",function($table){
+	$table->integer("roleid")->unsigned()->increments();
+	$table->string("title",128)->comment("角色名称");
+	$table->text("rules")->comment("权限列表");
+	$table->tinyInt("status")->defaultVal(1)->comment("状态");
+	$table->comment("角色管理");
+});
+
+//角色权限管理
+$control->create("role_access",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("uid")->alias("userid")->comment("userid");
+	$table->integer("roleid")->comment("roleid");
+	$table->comment("角色权限管理");
 });
 
 //管理员帐号关联项目
