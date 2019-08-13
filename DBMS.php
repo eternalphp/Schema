@@ -22,18 +22,18 @@ $control->displayMessage();
 //管理员帐号
 $control->create("admin",function($table){
 	$table->integer("userid")->unsigned()->increments();
-	$table->string("username",30)->comment("用户名");
+	$table->string("username",128)->comment("用户名");
 	$table->string("password",128)->comment("用户密码");
 	$table->string("name",50)->comment("姓名");
 	$table->string("mobile",20)->comment("手机号");
-	$table->integer("creater")->comment("创建人");
-	$table->integer("last_login")->comment("上次登录");
-	$table->tinyInt("try_time")->comment("尝试次数");
-	$table->string("last_ip",20)->comment("登录ip");
-	$table->tinyInt("status")->comment("账号状态 1:正常 2:禁止登陆");
-	$table->datetime("createtime")->nullable()->comment("创建时间");
+	$table->integer("creater")->nullable()->comment("创建人");
+	$table->datetime("last_login")->nullable()->comment("上次登录时间");
+	$table->tinyInt("try_time")->defaultVal(0)->comment("尝试次数");
+	$table->string("last_ip",20)->nullable()->comment("登录ip");
+	$table->tinyInt("status")->defaultVal(1)->comment("账号状态 1:正常 2:禁止登陆");
+	$table->datetime("createtime")->comment("创建时间");
 	$table->timestamp("updatetime")->comment("更新时间");
-	$table->tinyInt("isdelete")->comment("是否逻辑删除");
+	$table->tinyInt("isdelete")->defaultVal(0)->comment("是否逻辑删除");
 	$table->comment("管理员帐号");
 });
 
@@ -44,9 +44,9 @@ $control->create("admin_log",function($table){
 	$table->integer("userid")->comment("用户userid");
 	$table->string("operator",64)->comment("操作人");
 	$table->string("ip",64)->comment("ip地址");
-	$table->string("func",100)->comment("操作的权限点");
+	$table->string("func",100)->nullable()->comment("操作的权限点");
 	$table->text("url")->comment("访问地址");
-	$table->string("remark",255)->comment("备注");
+	$table->string("remark",255)->nullable()->comment("备注");
 	$table->text("details")->comment("详情");
 	$table->tinyInt("type")->defaultVal(1)->comment("类型 1日志 2错误 3警告");
 	$table->datetime("createtime")->comment("创建时间");
@@ -59,15 +59,15 @@ $control->create("menu",function($table){
 	$table->string("name",128)->comment("菜单名称");
 	$table->string("title",128)->comment("名称");
 	$table->tinyInt("type")->defaultVal(1)->comment("类型");
-	$table->text("url")->comment("访问地址");
+	$table->text("url")->nullable()->comment("访问地址");
 	$table->tinyInt("status")->defaultVal(1)->comment("1 启用; 0 禁用");
 	$table->tinyInt("menu")->defaultVal(1)->comment("1 作为菜单显示; 0 不显示");
-	$table->string("condition",255)->comment("");
+	$table->string("condition",255)->nullable()->comment("");
 	$table->integer("pid")->comment("父级ID");
-	$table->string("remark",255)->comment("备注");
-	$table->string("icon",100)->comment("菜单的图标");
-	$table->integer("sort")->comment("菜单排序");
-	$table->tinyInt("isdelete")->comment("是否逻辑删除");
+	$table->string("remark",255)->nullable()->comment("备注");
+	$table->string("icon",100)->nullable()->comment("菜单的图标");
+	$table->integer("sort")->defaultVal(1)->comment("菜单排序");
+	$table->tinyInt("isdelete")->defaultVal(0)->comment("是否逻辑删除");
 	$table->comment("菜单管理");
 });
 
@@ -88,12 +88,12 @@ $control->create("role_access",function($table){
 	$table->comment("角色权限管理");
 });
 
-//管理员帐号关联项目
-$control->create("admin_project",function($table){
+//管理员帐号关联项目分类
+$control->create("admin_category",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("userid")->comment("所属用户");
-	$table->integer("projectid")->comment("所属项目");
-	$table->comment("管理员帐号关联项目");
+	$table->integer("catid")->comment("所属项目");
+	$table->comment("管理员帐号关联项目分类");
 });
 
 
@@ -120,7 +120,7 @@ $control->create("project",function($table){
 	$table->datetime("createtime")->comment("创建时间");
 	$table->datetime("starttime")->nullable()->comment("开始时间");
 	$table->datetime("endtime")->nullable()->comment("完成时间");
-	$table->tinyInt("status")->comment("项目状态：0:准备中，1:进行中,2: 已完成");
+	$table->tinyInt("status")->defaultVal(1)->comment("项目状态：1:准备中，2:进行中,3: 已完成");
 	$table->timestamp("updatetime")->comment("更新时间");
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
 	$table->comment("项目管理信息表");
@@ -537,8 +537,37 @@ $model->table("reward_level")->replaceInto(array(
 	array('levelid'=>6,'title'=>'六等')
 ),true);
 
-//自动生成数据表结构文档
+
+
+if(file_exists("menu.json")){
+	$menu = json_decode(file_get_contents("menu.json"),true);
+	//$model->table("menu")->replaceInto($menu,true);
+}
+
+if(file_exists("role.json")){
+	$role = json_decode(file_get_contents("role.json"),true);
+	//$model->table("role")->replaceInto($role,true);
+}
+
+if(file_exists("role_access.json")){
+	$roleAccess = json_decode(file_get_contents("role_access.json"),true);
+	//$model->table("role_access")->replaceInto($roleAccess,true);
+}
+
+
 $tables = $control->getTableList();
+if($tables){
+	foreach($tables as $name=>$table){
+		$tbname = str_replace($config["prefix"],'',$name);
+		$list = $model->table($tbname)->select();
+		if($list){
+			file_put_contents(sprintf("data/%s.json",$tbname),json_encode($list));
+		}
+	}
+}
+
+
+//自动生成数据表结构文档
 (new phpWord('dif.docx','DIF数据库规范文档'))->create($tables);
 
 ?>
