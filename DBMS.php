@@ -131,6 +131,7 @@ $control->create("project",function($table){
 $control->create("examine",function($table){
 	$table->integer("examineid")->unsigned()->increments();
 	$table->string("code",20)->comment("问卷编号");
+	$table->string("pcode",20)->comment("问卷编号");
 	$table->integer("projectid")->comment("所属项目");
 	$table->string("title",200)->comment("问卷标题");
 	$table->string("description",200)->comment("问卷介绍");
@@ -243,6 +244,8 @@ $control->create("question",function($table){
 	
 	//问题选项数量限制
 	$table->integer("limitMaxItems")->comment("问题选项最多可选数量");
+	
+	$table->tinyInt("isdelete")->comment("是否逻辑删除");
 	
 	$table->comment("问卷问题信息表");
 });
@@ -538,30 +541,21 @@ $model->table("reward_level")->replaceInto(array(
 ),true);
 
 
-
-if(file_exists("menu.json")){
-	$menu = json_decode(file_get_contents("menu.json"),true);
-	//$model->table("menu")->replaceInto($menu,true);
-}
-
-if(file_exists("role.json")){
-	$role = json_decode(file_get_contents("role.json"),true);
-	//$model->table("role")->replaceInto($role,true);
-}
-
-if(file_exists("role_access.json")){
-	$roleAccess = json_decode(file_get_contents("role_access.json"),true);
-	//$model->table("role_access")->replaceInto($roleAccess,true);
-}
-
-
 $tables = $control->getTableList();
 if($tables){
 	foreach($tables as $name=>$table){
+		
 		$tbname = str_replace($config["prefix"],'',$name);
-		$list = $model->table($tbname)->select();
-		if($list){
-			file_put_contents(sprintf("data/%s.json",$tbname),json_encode($list));
+		$filename = sprintf("data/%s.json",$tbname);
+		
+		if(file_exists($filename)){
+			$data = json_decode(file_get_contents($filename),true);
+			$model->table($tbname)->replaceInto($data,true);
+		}else{
+			$list = $model->table($tbname)->select();
+			if($list){
+				file_put_contents($filename,json_encode($list));
+			}
 		}
 	}
 }
