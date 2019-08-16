@@ -158,16 +158,19 @@ $control->create("examine_reward",function($table){
 	$table->comment("问卷奖励设置");
 });
 
-//问卷奖励等级设置
-$control->create("examine_reward_level",function($table){
+//问卷奖励规则设置
+$control->create("examine_reward_rule",function($table){
 	$table->integer("id")->unsigned()->increments();
-	$table->integer("levelid")->comment("所属等级");
-	$table->integer("rewardid")->comment("所属奖励");
+	$table->integer("examineid")->comment("所属问卷");
+	$table->integer("leaveid")->comment("所属等级");
+	$table->string("label")->comment("等级名称");
 	$table->integer("nums")->comment("奖励数量");
 	$table->string("description")->comment("奖励说明");
-	$table->integer("maxAmount")->comment("最大金额");
-	$table->integer("minAmount")->comment("最小金额");
-	$table->comment("问卷奖励等级设置");
+	$table->integer("amount")->defaultVal(0)->comment("金额");
+	$table->tinyInt("logic")->defaultVal(0)->comment("逻辑：或选项");
+	$table->integer("maxAmount")->defaultVal(0)->comment("最大金额");
+	$table->integer("minAmount")->defaultVal(0)->comment("最小金额");
+	$table->comment("问卷奖励规则设置");
 });
 
 //问卷奖励等级
@@ -181,8 +184,8 @@ $control->create("reward_level",function($table){
 $control->create("examine_style",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("examineid")->comment("所属问卷");
-	$table->string("coverPath")->comment("封面图");
-	$table->string("backgroundPath")->comment("背景图");
+	$table->string("coverPath")->nullable()->comment("封面图");
+	$table->string("backgroundPath")->nullable()->comment("背景图");
 	$table->comment("问卷样式设置");
 });
 
@@ -191,12 +194,12 @@ $control->create("examine_question_style",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("examineid")->comment("所属问卷");
 	$table->integer("styleType")->comment("设置类型，1: 标题风格, 2: 简介风格, 3: 选项风格");
-	$table->integer("fontSize")->comment("字号");
-	$table->tinyInt("bold")->comment("加粗");
-	$table->tinyInt("italics")->comment("斜体");
-	$table->string("fontColor")->comment("文字颜色");
-	$table->string("backColor")->comment("背景色");
-	$table->string("subtitleBackColor")->comment("文字颜色");
+	$table->integer("fontSize")->nullable()->comment("字号");
+	$table->tinyInt("bold")->nullable()->comment("加粗");
+	$table->tinyInt("italics")->nullable()->comment("斜体");
+	$table->string("fontColor")->nullable()->comment("文字颜色");
+	$table->string("backColor")->nullable()->comment("背景色");
+	$table->string("subtitleBackColor")->nullable()->comment("文字颜色");
 	$table->comment("问卷样式设置");
 });
 
@@ -540,6 +543,7 @@ $model->table("reward_level")->replaceInto(array(
 	array('levelid'=>6,'title'=>'六等')
 ),true);
 
+$isSaveData = true; //是否保存数据
 
 $tables = $control->getTableList();
 if($tables){
@@ -548,13 +552,20 @@ if($tables){
 		$tbname = str_replace($config["prefix"],'',$name);
 		$filename = sprintf("data/%s.json",$tbname);
 		
-		if(file_exists($filename)){
-			$data = json_decode(file_get_contents($filename),true);
-			$model->table($tbname)->replaceInto($data,true);
-		}else{
+		if($isSaveData == true){
 			$list = $model->table($tbname)->select();
 			if($list){
 				file_put_contents($filename,json_encode($list));
+			}
+		}else{
+			if(file_exists($filename)){
+				$data = json_decode(file_get_contents($filename),true);
+				$model->table($tbname)->replaceInto($data,true);
+			}else{
+				$list = $model->table($tbname)->select();
+				if($list){
+					file_put_contents($filename,json_encode($list));
+				}
 			}
 		}
 	}
