@@ -248,6 +248,8 @@ $control->create("question",function($table){
 	//问题选项数量限制
 	$table->integer("limitMaxItems")->comment("问题选项最多可选数量");
 	
+	$table->integer("sort")->defaultVal(1000)->comment("排序");
+	
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
 	
 	$table->comment("问卷问题信息表");
