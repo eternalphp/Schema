@@ -212,6 +212,7 @@ $control->create("question",function($table){
 	$table->integer("examineid")->comment("所属问卷");
 	$table->string("title",200)->comment("问题标题");
 	$table->string("description",200)->comment("问题说明");
+	$table->text("content")->comment("问题内容");
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	
 	$table->tinyInt("itemType")->comment("选项类型，1:常规填空，2：横向填空");

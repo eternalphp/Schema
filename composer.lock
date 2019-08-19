@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eternalphp/framework.git",
-                "reference": "829385343ef2a2332d4f2450aff361f15e99901d"
+                "reference": "eb9cbbe63a078bdd9bfd1f3030a8d89b9b02c323"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eternalphp/framework/zipball/829385343ef2a2332d4f2450aff361f15e99901d",
-                "reference": "829385343ef2a2332d4f2450aff361f15e99901d",
+                "url": "https://api.github.com/repos/eternalphp/framework/zipball/eb9cbbe63a078bdd9bfd1f3030a8d89b9b02c323",
+                "reference": "eb9cbbe63a078bdd9bfd1f3030a8d89b9b02c323",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2019-08-16T14:16:09+00:00"
+            "time": "2019-08-19T05:43:54+00:00"
         },
         {
             "name": "eternalphp/wordcontrol",
