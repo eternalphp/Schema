@@ -330,12 +330,16 @@ $control->create("question_rules_content",function($table){
 	$table->integer("ruleid")->comment("所属问题选项规则");
 	$table->integer("inputType")->comment("选项类型,输入框类型:question_input_type");
 	$table->integer("itemIndex")->comment("选择第几个选项");
+	$table->string("coordinate",50)->nullable()->comment("特殊列坐标");
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	$table->integer("inputRule")->comment("输入规则, 查看输入规则表question_input_rules");
 	$table->tinyInt("isLimitUploadCount")->comment("是否限制上传文件数量");
 	$table->integer("uploadCount")->comment("限制上传文件数量");
 	$table->tinyInt("isLimitUploadSize")->comment("是否限制上传文件大小");
 	$table->integer("uploadSize")->comment("限制上传文件大小，单位:MB");
+	$table->string("mutexCoordinate",50)->comment("排斥选项坐标");
+	$table->tinyInt("mutexOtherItems")->defaultVal(1)->comment("1:排斥其他所有选项,2:排斥指定坐标项");
+	$table->string("mutexCoordinateItems",200)->comment("排斥指定坐标项");
 	$table->comment("问题选项规则内容设置");
 });
 
