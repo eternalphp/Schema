@@ -233,6 +233,8 @@ $control->create("question",function($table){
 	$table->tinyInt("isFile")->comment("限定文件：docx,doc,xlsx,xls,txt");
 	$table->tinyInt("isAudio")->comment("限定音频：mp3,mp4");
 	$table->tinyInt("isVideo")->comment("限定视频：mp4");
+	$table->tinyInt("isLimitUploadCount")->comment("是否限定上传数量");
+	$table->tinyInt("isLimitUploadSize")->comment("是否限定文件大小");
 	$table->tinyInt("limitUploadCount")->comment("限定数量");
 	$table->tinyInt("uploadSize")->comment("限定大小：单位MB");
 	
@@ -278,6 +280,7 @@ $control->create("question_items",function($table){
 	$table->integer("minValue")->comment("最小值");
 	$table->string("minDesc",100)->comment("最小值描述");
 	$table->string("otherDesc",200)->comment("特殊项描述, 如果选择特殊项，分数清0");
+	$table->tinyInt("isinline")->comment("描述与数字项显示同一行");
 	
 	//线性标度题选项
 	$table->integer("referenceValue")->comment("参照值");
