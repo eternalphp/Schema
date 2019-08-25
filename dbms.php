@@ -143,6 +143,8 @@ $control->create("examine",function($table){
 	$table->comment("问卷管理信息表");
 });
 
+/***************************************************************************/
+
 //问卷奖励设置
 $control->create("examine_reward",function($table){
 	$table->integer("rewardid")->unsigned()->increments();
@@ -203,6 +205,8 @@ $control->create("examine_question_style",function($table){
 	$table->comment("问卷样式设置");
 });
 
+/***************************************************************************/
+
 //问卷问题
 $control->create("question",function($table){
 	$table->integer("qid")->unsigned()->increments();
@@ -212,12 +216,13 @@ $control->create("question",function($table){
 	$table->integer("examineid")->comment("所属问卷");
 	$table->string("title",200)->comment("问题标题");
 	$table->string("description",200)->comment("问题说明");
-	$table->text("content")->comment("问题内容");
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	
-	$table->tinyInt("itemType")->comment("选项类型，1:常规填空，2：横向填空");
-	$table->tinyInt("checkType")->comment("选项类型，1:横向单选，2：横向多选");
+	$table->tinyInt("dsplayMode")->comment("选项显示方式：0:按添加顺序显示,1:随机排列");
+	$table->tinyInt("relationItemModule")->comment("关联选项的模块");
+	$table->tinyInt("relationItemNumber")->comment("关联选项的序号");
 	
+/* 	
 	//城市选择题
 	$table->tinyInt("isProvince")->comment("是否选择省");
 	$table->tinyInt("isCity")->comment("是否选择市");
@@ -246,27 +251,83 @@ $control->create("question",function($table){
 	
 	
 	//填空题
+	$table->tinyInt("itemType")->comment("选项类型，1:常规填空，2：横向填空");
 	$table->integer("isPercentInputItem")->comment("填空题, 将常规填空设置为百分比填空");
+	$table->text("content")->comment("问题内容");
 	
-	//问题选项数量限制
-	$table->integer("limitMaxItems")->comment("问题选项最多可选数量");
+	//表量题
+	$table->tinyInt("checkType")->comment("表量题选项类型，1:横向单选，2：横向多选");
+	$table->integer("limitMaxItems")->comment("表量题选项最多可选数量");
+	
+	//打分题
+	$table->integer("scoreType")->comment("打分类型，1：数值打分，2: 5星打分");
+	$table->integer("isHalfCount")->comment("是否半星计分"); */
 	
 	$table->integer("sort")->defaultVal(1000)->comment("排序");
-	
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
-	
 	$table->comment("问卷问题信息表");
 });
 
-//问题量表选项
-$control->create("question_items_checkItem",function($table){
-	$table->integer("chkitemid")->unsigned()->increments();
-	$table->integer("itemid")->comment("所属问题");
-	$table->string("title",200)->comment("选项说明");
-	$table->comment("问题量表选项");
+
+//文件题
+$control->create("question_file",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->tinyInt("isPicture")->comment("限定图片：jpg,png,gif");
+	$table->tinyInt("isFile")->comment("限定文件：docx,doc,xlsx,xls,txt");
+	$table->tinyInt("isAudio")->comment("限定音频：mp3,mp4");
+	$table->tinyInt("isVideo")->comment("限定视频：mp4");
+	$table->tinyInt("isLimitUploadCount")->comment("是否限定上传数量");
+	$table->tinyInt("isLimitUploadSize")->comment("是否限定文件大小");
+	$table->tinyInt("limitUploadCount")->comment("限定数量");
+	$table->tinyInt("uploadSize")->comment("限定大小：单位MB");
+	$table->comment("文件题");
 });
 
-//
+//线性标度题
+$control->create("question_linear",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->tinyInt("startValue")->comment("起始值");
+	$table->tinyInt("startDesc")->comment("起始值说明");
+	$table->tinyInt("endValue")->comment("终止值");
+	$table->tinyInt("endDesc")->comment("终止值说明");
+	$table->comment("线性标度题");
+});
+
+//城市选择题
+$control->create("question_city",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->tinyInt("isProvince")->comment("是否选择省");
+	$table->tinyInt("isCity")->comment("是否选择市");
+	$table->tinyInt("isCounty")->comment("是否选择县");
+	$table->comment("城市选择题");
+});
+
+//日期选择题
+$control->create("question_date",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->tinyInt("isYear")->comment("是否选择年");
+	$table->tinyInt("isMonth")->comment("是否选择月");
+	$table->tinyInt("isDay")->comment("是否选择日");
+	$table->comment("日期选择题");
+});
+
+//填空题
+$control->create("question_input",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->text("content")->comment("问题内容");
+	$table->tinyInt("itemType")->comment("选项类型，1:常规填空，2：横向填空");
+	$table->integer("isPercentInputItem")->comment("填空题, 将常规填空设置为百分比填空");
+	$table->comment("日期选择题");
+});
+
+/***************************************************************************/
+
+//问题选项
 $control->create("question_items",function($table){
 	$table->integer("itemid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
@@ -274,7 +335,6 @@ $control->create("question_items",function($table){
 	$table->string("filename",200)->comment("选项文件");
 	
 	//打分题
-	$table->integer("scoreType")->comment("打分类型，1：数值打分，2: 5星打分，3: 半星计分");
 	$table->integer("maxValue")->comment("最大值");
 	$table->string("maxDesc",100)->comment("最大值描述");
 	$table->integer("minValue")->comment("最小值");
@@ -286,93 +346,62 @@ $control->create("question_items",function($table){
 	$table->integer("referenceValue")->comment("参照值");
 	$table->string("referenceDesc",100)->comment("参照值描述");
 	
+	$table->tinyInt("otherRow")->comment("特殊行");
+	
 	$table->comment("问题选项信息表");
 });
 
-
-//问题答案
-$control->create("question_answer",function($table){
-	$table->integer("askid")->unsigned()->increments();
+//问题量表选项
+$control->create("question_items_checkItem",function($table){
+	$table->integer("chkitemid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->integer("itemid")->comment("所属问题选项");
-	$table->string("content",200)->comment("用户反馈的内容");
-	$table->integer("sort")->comment("用户对选项的排序");
-	$table->integer("score")->comment("用户对选项打分整数部分");
-	$table->tinyInt("ishalf")->comment("用户对选项打分半分部分,0:无半分，1：半分");
-	$table->integer("userid")->comment("问题反馈的用户userid");
-	$table->datetime("createtime")->comment("问题反馈的时间");
-	$table->comment("问题用户反馈信息表");
+	$table->string("title",200)->comment("选项说明");
+	$table->tinyInt("otherCell")->comment("特殊列");
+	$table->comment("问题量表选项");
 });
 
-//量表题选择子项目答案
-$control->create("question_answer_items",function($table){
+/***************************************************************************/
+
+//问题选项规则设置
+$control->create("question_rules_items",function($table){
 	$table->integer("id")->unsigned()->increments();
-	$table->integer("askid")->comment("所属用户答案");
-	$table->integer("itemid")->comment("所属问题选项");
-	$table->integer("chkitemid")->comment("所属问题选项");
-	$table->string("chkitemids",100)->comment("所属问题选项多选");
-	$table->string("content",200)->comment("用户反馈的内容");
-	$table->comment("量表题选择子项目答案");
-});
-
-//问题选项规则
-$control->create("question_rules",function($table){
-	$table->integer("ruleid")->unsigned()->increments();
-	$table->integer("itemid")->comment("所属问题选项");
-	$table->tinyInt("dsplayMode")->comment("选项显示方式：0:按添加顺序显示,1:随机排列");
-	$table->tinyInt("relationItemModule")->comment("关联选项的模块");
-	$table->tinyInt("relationItemNumber")->comment("关联选项的序号");
-	$table->integer("mutexNumber")->comment("排斥选项序号");
-	$table->integer("mutexItemid")->comment("排斥选项");
-	$table->comment("问题选项规则设置");
-});
-
-//问题选项规则内容设置
-$control->create("question_rules_content",function($table){
-	$table->integer("id")->unsigned()->increments();
-	$table->integer("ruleid")->comment("所属问题选项规则");
+	
+	$table->integer("qid")->comment("所属问题");
+	
 	$table->integer("inputType")->comment("选项类型,输入框类型:question_input_type");
 	$table->integer("itemIndex")->comment("选择第几个选项");
 	$table->string("coordinate",50)->nullable()->comment("特殊列坐标");
+	
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	$table->integer("inputRule")->comment("输入规则, 查看输入规则表question_input_rules");
+	
 	$table->tinyInt("isLimitUploadCount")->comment("是否限制上传文件数量");
 	$table->integer("uploadCount")->comment("限制上传文件数量");
 	$table->tinyInt("isLimitUploadSize")->comment("是否限制上传文件大小");
 	$table->integer("uploadSize")->comment("限制上传文件大小，单位:MB");
-	$table->string("mutexCoordinate",50)->comment("排斥选项坐标");
-	$table->tinyInt("mutexOtherItems")->defaultVal(1)->comment("1:排斥其他所有选项,2:排斥指定坐标项");
-	$table->string("mutexCoordinateItems",200)->comment("排斥指定坐标项");
+	
 	$table->comment("问题选项规则内容设置");
 });
 
-//打分类型定义
-$control->create("question_score_type",function($table){
+//问题选项排斥规则内容设置
+$control->create("question_rules_mutexs",function($table){
 	$table->integer("id")->unsigned()->increments();
-	$table->string("title",200)->comment("类型说明");
-	$table->comment("打分类型定义");
+	
+	$table->integer("qid")->comment("所属问题");
+	
+	$table->integer("mutexNumber")->comment("排斥选项序号");
+	$table->integer("mutexItemid")->comment("排斥选项");
+	
+	$table->string("mutexCoordinate",50)->comment("排斥选项坐标");
+	$table->tinyInt("mutexOtherItems")->defaultVal(1)->comment("1:排斥其他所有选项,2:排斥指定坐标项");
+	$table->string("mutexCoordinateItems",200)->comment("排斥指定坐标项");
+	
+	$table->comment("问题选项规则内容设置");
 });
 
-//题目类型定义
-$control->create("question_type",function($table){
-	$table->integer("id")->unsigned()->increments();
-	$table->string("title",200)->comment("类型说明");
-	$table->comment("题目类型定义");
-});
 
-//问题输入规则表
-$control->create("question_input_rules",function($table){
-	$table->integer("id")->unsigned()->increments();
-	$table->string("title",50)->comment("输入规则名称");
-	$table->comment("问题输入规则表");
-});
+/***************************************************************************/
 
-//输入框类型列表
-$control->create("question_input_type",function($table){
-	$table->integer("id")->unsigned()->increments();
-	$table->string("name",50)->comment("输入框名称");
-	$table->comment("输入框类型列表");
-});
 
 //问题逻辑规则设置
 $control->create("question_logic_rules",function($table){
@@ -478,6 +507,36 @@ $control->create("scoring_logic_rules",function($table){
 	$table->comment("打分问题逻辑规则设置");
 });
 
+/***************************************************************************/
+
+//打分类型定义
+$control->create("question_score_type",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->string("title",200)->comment("类型说明");
+	$table->comment("打分类型定义");
+});
+
+//题目类型定义
+$control->create("question_type",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->string("title",200)->comment("类型说明");
+	$table->comment("题目类型定义");
+});
+
+//问题输入规则表
+$control->create("question_input_rules",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->string("title",50)->comment("输入规则名称");
+	$table->comment("问题输入规则表");
+});
+
+//输入框类型列表
+$control->create("question_input_type",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->string("name",50)->comment("输入框名称");
+	$table->comment("输入框类型列表");
+});
+
 
 //上传问卷评测人员
 $control->create("examine_users",function($table){
@@ -499,6 +558,31 @@ $control->create("examine_users",function($table){
 	$table->comment("上传问卷评测人员");
 });
 
+
+//问题答案
+$control->create("question_answer",function($table){
+	$table->integer("askid")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->integer("itemid")->comment("所属问题选项");
+	$table->string("content",200)->comment("用户反馈的内容");
+	$table->integer("sort")->comment("用户对选项的排序");
+	$table->integer("score")->comment("用户对选项打分整数部分");
+	$table->tinyInt("ishalf")->comment("用户对选项打分半分部分,0:无半分，1：半分");
+	$table->integer("userid")->comment("问题反馈的用户userid");
+	$table->datetime("createtime")->comment("问题反馈的时间");
+	$table->comment("问题用户反馈信息表");
+});
+
+//量表题选择子项目答案
+$control->create("question_answer_items",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("askid")->comment("所属用户答案");
+	$table->integer("itemid")->comment("所属问题选项");
+	$table->integer("chkitemid")->comment("所属问题选项");
+	$table->string("chkitemids",100)->comment("所属问题选项多选");
+	$table->string("content",200)->comment("用户反馈的内容");
+	$table->comment("量表题选择子项目答案");
+});
 
 $model = new Model($config);
 
@@ -553,7 +637,7 @@ $model->table("reward_level")->replaceInto(array(
 	array('levelid'=>6,'title'=>'六等')
 ),true);
 
-$isSaveData = true; //是否保存数据
+$isSaveData = false; //是否保存数据
 
 $tables = $control->getTableList();
 if($tables){
