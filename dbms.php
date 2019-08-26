@@ -4,6 +4,7 @@ require __DIR__ . "/vendor/autoload.php";
 
 use framework\Database\Schema\Control;
 use framework\Database\Eloquent\Model;
+use framework\Database\Schema\Table;
 
 $config = array(
 	'driver'=>'MySqli',
@@ -218,9 +219,12 @@ $control->create("question",function($table){
 	$table->string("description",200)->comment("问题说明");
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	
-	$table->tinyInt("dsplayMode")->comment("选项显示方式：0:按添加顺序显示,1:随机排列");
-	$table->tinyInt("relationItemModule")->comment("关联选项的模块");
-	$table->tinyInt("relationItemNumber")->comment("关联选项的序号");
+	$table->tinyInt("dsplayMode")->nullable()->comment("选项显示方式：0:按添加顺序显示,1:随机排列");
+	$table->tinyInt("relationItemModule")->nullable()->comment("关联选项的模块");
+	$table->tinyInt("relationItemNumber")->nullable()->comment("关联选项的序号");
+	
+	$table->integer("minValue")->nullable()->comment("下拉题最小值区间");
+	$table->integer("maxValue")->nullable()->comment("下拉题最大值区间");
 	
 /* 	
 	//城市选择题
@@ -264,6 +268,10 @@ $control->create("question",function($table){
 	$table->integer("isHalfCount")->comment("是否半星计分"); */
 	
 	$table->integer("sort")->defaultVal(1000)->comment("排序");
+	
+	$table->datetime("createtime")->comment("创建时间");
+	$table->timestamp("updatetime")->comment("更新时间");
+	
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
 	$table->comment("问卷问题信息表");
 });
@@ -319,9 +327,9 @@ $control->create("question_date",function($table){
 $control->create("question_input",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->text("content")->comment("问题内容");
-	$table->tinyInt("itemType")->comment("选项类型，1:常规填空，2：横向填空");
-	$table->integer("isPercentInputItem")->comment("填空题, 将常规填空设置为百分比填空");
+	$table->text("content")->nullable()->comment("问题内容");
+	$table->tinyInt("itemType")->nullable()->comment("选项类型，1:常规填空，2：横向填空");
+	$table->integer("isPercentInputItem")->nullable()->comment("填空题, 将常规填空设置为百分比填空");
 	$table->comment("日期选择题");
 });
 
@@ -331,28 +339,28 @@ $control->create("question_input",function($table){
 $control->create("question_items",function($table){
 	$table->integer("itemid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->string("title",200)->comment("选项说明");
-	$table->string("filename",200)->comment("选项文件");
+	$table->string("title",200)->nullable()->comment("选项说明");
+	$table->string("filename",200)->nullable()->comment("选项文件");
 	
 	//打分题
-	$table->integer("maxValue")->comment("最大值");
-	$table->string("maxDesc",100)->comment("最大值描述");
-	$table->integer("minValue")->comment("最小值");
-	$table->string("minDesc",100)->comment("最小值描述");
-	$table->string("otherDesc",200)->comment("特殊项描述, 如果选择特殊项，分数清0");
-	$table->tinyInt("isinline")->comment("描述与数字项显示同一行");
+	$table->integer("maxValue")->nullable()->comment("最大值");
+	$table->string("maxDesc",100)->nullable()->comment("最大值描述");
+	$table->integer("minValue")->nullable()->comment("最小值");
+	$table->string("minDesc",100)->nullable()->comment("最小值描述");
+	$table->string("otherDesc",200)->nullable()->comment("特殊项描述, 如果选择特殊项，分数清0");
+	$table->tinyInt("isinline")->nullable()->comment("描述与数字项显示同一行");
 	
 	//线性标度题选项
-	$table->integer("referenceValue")->comment("参照值");
-	$table->string("referenceDesc",100)->comment("参照值描述");
+	$table->integer("referenceValue")->nullable()->comment("参照值");
+	$table->string("referenceDesc",100)->nullable()->comment("参照值描述");
 	
-	$table->tinyInt("otherRow")->comment("特殊行");
+	$table->tinyInt("otherRow")->nullable()->comment("特殊行");
 	
 	$table->comment("问题选项信息表");
 });
 
 //问题量表选项
-$control->create("question_items_checkItem",function($table){
+$control->create("question_items_checkitem",function($table){
 	$table->integer("chkitemid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->string("title",200)->comment("选项说明");
@@ -637,11 +645,16 @@ $model->table("reward_level")->replaceInto(array(
 	array('levelid'=>6,'title'=>'六等')
 ),true);
 
-$isSaveData = false; //是否保存数据
+$isSaveData = true; //是否保存数据
 
+
+
+$tablesList = array();
 $tables = $control->getTableList();
 if($tables){
 	foreach($tables as $name=>$table){
+		
+		$tablesList[] = $name;
 		
 		$tbname = str_replace($config["prefix"],'',$name);
 		$filename = sprintf("data/%s.json",$tbname);
@@ -661,6 +674,20 @@ if($tables){
 					file_put_contents($filename,json_encode($list));
 				}
 			}
+		}
+	}
+}
+
+
+$list = $model->getTables();
+
+if($list){
+	foreach($list as $name){
+		$table = new Table($name);
+		if(!in_array($name,$tablesList)){
+			$sql = $table->drop();
+			$control->connect()->execute($sql);
+			echo "drop table $name \n";
 		}
 	}
 }
