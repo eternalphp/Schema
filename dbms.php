@@ -287,8 +287,8 @@ $control->create("question_file",function($table){
 	$table->tinyInt("isVideo")->comment("限定视频：mp4");
 	$table->tinyInt("isLimitUploadCount")->comment("是否限定上传数量");
 	$table->tinyInt("isLimitUploadSize")->comment("是否限定文件大小");
-	$table->tinyInt("limitUploadCount")->comment("限定数量");
-	$table->tinyInt("uploadSize")->comment("限定大小：单位MB");
+	$table->tinyInt("limitUploadCount")->nullable()->comment("限定数量");
+	$table->tinyInt("uploadSize")->nullable()->comment("限定大小：单位MB");
 	$table->comment("文件题");
 });
 
@@ -297,9 +297,9 @@ $control->create("question_linear",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->tinyInt("startValue")->comment("起始值");
-	$table->tinyInt("startDesc")->comment("起始值说明");
+	$table->string("startDesc",200)->comment("起始值说明");
 	$table->tinyInt("endValue")->comment("终止值");
-	$table->tinyInt("endDesc")->comment("终止值说明");
+	$table->string("endDesc",200)->comment("终止值说明");
 	$table->comment("线性标度题");
 });
 
@@ -323,6 +323,25 @@ $control->create("question_date",function($table){
 	$table->comment("日期选择题");
 });
 
+//打分题
+$control->create("question_scoring",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->integer("scoreType")->comment("打分类型，1：数值打分，2: 5星打分");
+	$table->tinyInt("isHalfCount")->comment("是否半星计分");
+	$table->comment("打分题");
+});
+
+
+//量表题
+$control->create("question_gauge",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->tinyInt("checkType")->comment("量表题选项类型，1:横向单选，2：横向多选");
+	$table->integer("limitMaxItems")->comment("量表题选项最多可选数量");
+	$table->comment("量表题");
+});
+
 //填空题
 $control->create("question_input",function($table){
 	$table->integer("id")->unsigned()->increments();
@@ -330,7 +349,7 @@ $control->create("question_input",function($table){
 	$table->text("content")->nullable()->comment("问题内容");
 	$table->tinyInt("itemType")->nullable()->comment("选项类型，1:常规填空，2：横向填空");
 	$table->integer("isPercentInputItem")->nullable()->comment("填空题, 将常规填空设置为百分比填空");
-	$table->comment("日期选择题");
+	$table->comment("填空题");
 });
 
 /***************************************************************************/
@@ -339,6 +358,9 @@ $control->create("question_input",function($table){
 $control->create("question_items",function($table){
 	$table->integer("itemid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
+	
+	$table->integer("index")->comment("选项序号");
+	
 	$table->string("title",200)->nullable()->comment("选项说明");
 	$table->string("filename",200)->nullable()->comment("选项文件");
 	
@@ -347,6 +369,7 @@ $control->create("question_items",function($table){
 	$table->string("maxDesc",100)->nullable()->comment("最大值描述");
 	$table->integer("minValue")->nullable()->comment("最小值");
 	$table->string("minDesc",100)->nullable()->comment("最小值描述");
+	$table->tinyInt("isOtherItem")->nullable()->comment("是否特殊项");
 	$table->string("otherDesc",200)->nullable()->comment("特殊项描述, 如果选择特殊项，分数清0");
 	$table->tinyInt("isinline")->nullable()->comment("描述与数字项显示同一行");
 	
@@ -360,10 +383,11 @@ $control->create("question_items",function($table){
 });
 
 //问题量表选项
-$control->create("question_items_checkitem",function($table){
-	$table->integer("chkitemid")->unsigned()->increments();
+$control->create("question_items_cells",function($table){
+	$table->integer("cellid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->string("title",200)->comment("选项说明");
+	$table->integer("index")->comment("列序号");
+	$table->string("title",200)->alias("itemDesc")->comment("选项说明");
 	$table->tinyInt("otherCell")->comment("特殊列");
 	$table->comment("问题量表选项");
 });
