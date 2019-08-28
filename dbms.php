@@ -136,9 +136,13 @@ $control->create("examine",function($table){
 	$table->integer("projectid")->comment("所属项目");
 	$table->string("title",200)->comment("问卷标题");
 	$table->string("description",200)->comment("问卷介绍");
+	$table->tinyInt("isLimitIp")->nullable()->comment("是否限制ip数");
+	$table->integer("limitIps")->nullable()->comment("限制ip数");
+	$table->tinyInt("isLimitDevice")->nullable()->comment("是否限制终端数");
+	$table->integer("limitDevices")->nullable()->comment("限制终端数");
 	$table->integer("userid")->alias("creater")->comment("创建人");
 	$table->datetime("createtime")->comment("创建时间");
-	$table->tinyInt("status")->comment("问卷状态：0:草稿，1:已上架,2: 已下架");
+	$table->tinyInt("status")->comment("问卷状态：1:草稿，2:已上架,3: 已下架");
 	$table->timestamp("updatetime")->comment("更新时间");
 	$table->tinyInt("isdelete")->comment("是否逻辑删除");
 	$table->comment("问卷管理信息表");
@@ -220,8 +224,8 @@ $control->create("question",function($table){
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	
 	$table->tinyInt("dsplayMode")->nullable()->comment("选项显示方式：0:按添加顺序显示,1:随机排列");
-	$table->tinyInt("relationItemModule")->nullable()->comment("关联选项的模块");
-	$table->tinyInt("relationItemNumber")->nullable()->comment("关联选项的序号");
+	$table->string("relationItemModule",20)->nullable()->comment("关联选项的模块");
+	$table->integer("relationItemNumber")->nullable()->comment("关联选项的序号");
 	
 	$table->integer("minValue")->nullable()->comment("下拉题最小值区间");
 	$table->integer("maxValue")->nullable()->comment("下拉题最大值区间");
@@ -364,6 +368,8 @@ $control->create("question_items",function($table){
 	$table->string("title",200)->nullable()->comment("选项说明");
 	$table->string("filename",200)->nullable()->comment("选项文件");
 	
+	$table->tinyInt("isRelationItem")->nullable()->comment("是否关联选项");
+	
 	//打分题
 	$table->integer("maxValue")->nullable()->comment("最大值");
 	$table->string("maxDesc",100)->nullable()->comment("最大值描述");
@@ -407,10 +413,10 @@ $control->create("question_rules_items",function($table){
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
 	$table->integer("inputRule")->comment("输入规则, 查看输入规则表question_input_rules");
 	
-	$table->tinyInt("isLimitUploadCount")->comment("是否限制上传文件数量");
-	$table->integer("uploadCount")->comment("限制上传文件数量");
-	$table->tinyInt("isLimitUploadSize")->comment("是否限制上传文件大小");
-	$table->integer("uploadSize")->comment("限制上传文件大小，单位:MB");
+	$table->tinyInt("isLimitUploadCount")->nullable()->comment("是否限制上传文件数量");
+	$table->integer("uploadCount")->nullable()->comment("限制上传文件数量");
+	$table->tinyInt("isLimitUploadSize")->nullable()->comment("是否限制上传文件大小");
+	$table->integer("uploadSize")->nullable()->comment("限制上传文件大小，单位:MB");
 	
 	$table->comment("问题选项规则内容设置");
 });
@@ -440,7 +446,7 @@ $control->create("question_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->integer("inputItemIndex")->comment("选项序号");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("问题逻辑规则设置");
 });
@@ -473,14 +479,14 @@ $control->create("date_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->string("inputItemDate",100)->comment("日期选择题，输入日期规则");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("日期选择题问题逻辑规则设置");
 });
 
 
 //城市选择题问题逻辑规则设置
-$control->create("area_logic_rules",function($table){
+$control->create("city_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->string("inputItemArea",100)->comment("城市选择题，输入地区规则");
@@ -496,7 +502,7 @@ $control->create("select_logic_rules",function($table){
 	$table->integer("qid")->comment("所属问题");
 	$table->integer("inputItemMaxValue")->comment("下拉题选项最大值");
 	$table->integer("inputItemMinValue")->comment("下拉题选项最小值");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("下拉题问题逻辑规则设置");
 });
@@ -508,7 +514,7 @@ $control->create("gauge_logic_rules",function($table){
 	$table->integer("qid")->comment("所属问题");
 	$table->string("inputItemIndexs",100)->comment("选项序号多个: 1,2,3");
 	$table->string("rules",100)->comment("逻辑规则，1 and 2 or 3");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("问题逻辑规则设置");
 });
@@ -534,7 +540,7 @@ $control->create("scoring_logic_rules",function($table){
 	$table->integer("inputItemCount")->comment("选项个数");		
 	$table->integer("maxValue")->comment("最大分值");
 	$table->integer("minValue")->comment("最小分值");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("打分问题逻辑规则设置");
 });
@@ -569,6 +575,19 @@ $control->create("question_input_type",function($table){
 	$table->comment("输入框类型列表");
 });
 
+//问卷问题修改日志
+$control->create("question_logs",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("qid")->comment("所属问题");
+	$table->integer("updateAreaType")->comment("修改区域，1: 基本信息，2：选项修改，3：题目设置，4：选项设置");
+	$table->integer("handleType")->comment("操作类型，1: 增加，2：编辑，3：删除");
+	$table->string("oldValue",200)->comment("修改前的内容");
+	$table->string("newValue",200)->comment("修改后的内容");
+	$table->text("data")->comment("提交的数据");
+	$table->string("url")->comment("提交的url");
+	$table->integer("creater")->comment("操作人");
+	$table->timestamp("createtime")->comment("操作时间");
+});
 
 //上传问卷评测人员
 $control->create("examine_users",function($table){
