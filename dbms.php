@@ -406,12 +406,12 @@ $control->create("question_rules_items",function($table){
 	
 	$table->integer("qid")->comment("所属问题");
 	
-	$table->integer("inputType")->comment("选项类型,输入框类型:question_input_type");
-	$table->integer("itemIndex")->comment("选择第几个选项");
+	$table->integer("inputType")->nullable()->comment("选项类型,输入框类型:question_input_type");
+	$table->integer("itemIndex")->nullable()->comment("选择第几个选项");
 	$table->string("coordinate",50)->nullable()->comment("特殊列坐标");
 	
 	$table->tinyInt("isRequired")->defaultVal(1)->comment("是否必填项,0:非必填项，1：必填项");
-	$table->integer("inputRule")->comment("输入规则, 查看输入规则表question_input_rules");
+	$table->integer("inputRule")->nullable()->comment("输入规则, 查看输入规则表question_input_rules");
 	
 	$table->tinyInt("isLimitUploadCount")->nullable()->comment("是否限制上传文件数量");
 	$table->integer("uploadCount")->nullable()->comment("限制上传文件数量");
@@ -427,12 +427,12 @@ $control->create("question_rules_mutexs",function($table){
 	
 	$table->integer("qid")->comment("所属问题");
 	
-	$table->integer("mutexNumber")->comment("排斥选项序号");
-	$table->integer("mutexItemid")->comment("排斥选项");
+	$table->integer("mutexNumber")->nullable()->comment("排斥选项序号");
+	$table->integer("mutexItemid")->nullable()->comment("排斥选项");
 	
-	$table->string("mutexCoordinate",50)->comment("排斥选项坐标");
-	$table->tinyInt("mutexOtherItems")->defaultVal(1)->comment("1:排斥其他所有选项,2:排斥指定坐标项");
-	$table->string("mutexCoordinateItems",200)->comment("排斥指定坐标项");
+	$table->string("mutexCoordinate",50)->nullable()->comment("排斥选项坐标");
+	$table->tinyInt("mutexOtherItems")->nullable()->comment("1:排斥其他所有选项,2:排斥指定坐标项");
+	$table->string("mutexCoordinateItems",200)->nullable()->comment("排斥指定坐标项");
 	
 	$table->comment("问题选项规则内容设置");
 });
@@ -490,7 +490,7 @@ $control->create("city_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->string("inputItemArea",100)->comment("城市选择题，输入地区规则");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("城市选择题问题逻辑规则设置");
 });
@@ -535,11 +535,11 @@ $control->create("gauge_logic_rules_items",function($table){
 $control->create("scoring_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->tinyInt("isSpecialItem")->comment("选择为特殊项");
-	$table->integer("inputItemIndex")->comment("选项序号");
-	$table->integer("inputItemCount")->comment("选项个数");		
-	$table->integer("maxValue")->comment("最大分值");
-	$table->integer("minValue")->comment("最小分值");
+	$table->tinyInt("isSpecialItem")->nullable()->comment("选择为特殊项");
+	$table->integer("inputItemIndex")->nullable()->comment("选项序号");
+	$table->integer("inputItemCount")->nullable()->comment("选项个数");		
+	$table->integer("maxValue")->nullable()->comment("最大分值");
+	$table->integer("minValue")->nullable()->comment("最小分值");
 	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("打分问题逻辑规则设置");
