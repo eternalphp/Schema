@@ -1,0 +1,1 @@
+[{"logicid":"5","qid":"123","inputItemIndexs":"1,2","multipleItems":null,"itemsRule":null,"skipModule":"s2","skipIndex":"1"},{"logicid":"6","qid":"123","inputItemIndexs":null,"multipleItems":"[{\"type\":\"input\",\"value\":\"1\"},{\"type\":\"select\",\"value\":\"and\"},{\"type\":\"input\",\"value\":\"2\"}]","itemsRule":"1 and 2","skipModule":"s2","skipIndex":"3"}]

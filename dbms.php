@@ -27,6 +27,7 @@ $control->create("admin",function($table){
 	$table->string("password",128)->comment("用户密码");
 	$table->string("name",50)->comment("姓名");
 	$table->string("mobile",20)->comment("手机号");
+	$table->string("avatar",100)->nullable()->comment("头像");
 	$table->integer("creater")->nullable()->comment("创建人");
 	$table->datetime("last_login")->nullable()->comment("上次登录时间");
 	$table->tinyInt("try_time")->defaultVal(0)->comment("尝试次数");
@@ -226,6 +227,8 @@ $control->create("question",function($table){
 	$table->tinyInt("dsplayMode")->nullable()->comment("选项显示方式：0:按添加顺序显示,1:随机排列");
 	$table->string("relationItemModule",20)->nullable()->comment("关联选项的模块");
 	$table->integer("relationItemNumber")->nullable()->comment("关联选项的序号");
+	
+	$table->integer("limitMaxItems")->nullable()->comment("限定用户最多可选选项数");
 	
 	$table->integer("minValue")->nullable()->comment("下拉题最小值区间");
 	$table->integer("maxValue")->nullable()->comment("下拉题最大值区间");
@@ -456,9 +459,10 @@ $control->create("question_logic_rules",function($table){
 $control->create("checkbox_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->string("inputItemIndexs",100)->comment("选项序号多个: 1,2,3");
-	$table->string("rules",100)->comment("逻辑规则，1 and 2 or 3");
-	$table->integer("skipModule")->comment("跳转到模块");
+	$table->string("inputItemIndexs",100)->nullable()->comment("选项序号多个: 1,2,3");
+	$table->text("multipleItems")->nullable()->comment("逻辑规则，1 and 2 or 3");
+	$table->string("itemsRule",200)->nullable()->comment("逻辑规则，1 and 2 or 3");
+	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("问题逻辑规则设置");
 });
@@ -467,9 +471,8 @@ $control->create("checkbox_logic_rules",function($table){
 $control->create("checkbox_logic_rules_items",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->integer("logicid")->comment("所属逻辑规则");
-	$table->integer("number")->comment("序号");
-	$table->string("rules",100)->comment("逻辑规则，1 and 2 or 3");
+	$table->integer("index")->comment("序号");
+	$table->text("rules")->comment("逻辑规则，1 and 2 or 3");
 	$table->comment("多选题问题复杂逻辑规则设置");
 });
 
@@ -512,8 +515,9 @@ $control->create("select_logic_rules",function($table){
 $control->create("gauge_logic_rules",function($table){
 	$table->integer("logicid")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
-	$table->string("inputItemIndexs",100)->comment("选项序号多个: 1,2,3");
-	$table->string("rules",100)->comment("逻辑规则，1 and 2 or 3");
+	$table->string("inputItemIndexs",100)->nullable()->comment("选项序号多个: 1,2,3");
+	$table->text("multipleItems")->nullable()->comment("逻辑规则，1 and 2 or 3");
+	$table->string("itemsRule",100)->nullable()->comment("逻辑规则，1 and 2 or 3");
 	$table->string("skipModule",20)->comment("跳转到模块");
 	$table->integer("skipIndex")->comment("跳转到序号");
 	$table->comment("问题逻辑规则设置");
@@ -524,8 +528,8 @@ $control->create("gauge_logic_rules_items",function($table){
 	$table->integer("id")->unsigned()->increments();
 	$table->integer("qid")->comment("所属问题");
 	$table->integer("logicid")->comment("所属逻辑规则");
-	$table->integer("number")->comment("序号");
-	$table->string("rules",100)->comment("逻辑规则，坐标1 and 坐标2 or 坐标3");
+	$table->integer("index")->comment("序号");
+	$table->text("rules")->comment("逻辑规则，坐标1 and 坐标2 or 坐标3");
 	$table->comment("量表题复杂逻辑规则设置");
 });
 
@@ -589,15 +593,27 @@ $control->create("question_logs",function($table){
 	$table->timestamp("createtime")->comment("操作时间");
 });
 
+//上传问卷评测人员文件记录
+$control->create("examine_file",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("examineid")->comment("所属问题");
+	$table->string("filename",100)->nullable()->comment("文件路径");
+	$table->string("title",30)->nullable()->comment("原文件名称");
+	$table->datetime("createtime")->comment("创建时间");
+	$table->integer("creater")->comment("创建人");
+	$table->comment("上传问卷评测人员文件记录");
+});
+
 //上传问卷评测人员
 $control->create("examine_users",function($table){
 	$table->integer("userid")->unsigned()->increments();
 	$table->integer("examineid")->comment("所属问题");
+	$table->integer("type")->comment("1：名单评测，2：匿名评测");
 	$table->string("deviceID")->nullable()->comment("设备ID");
-	$table->string("name",20)->comment("姓名");
-	$table->string("mobile",11)->comment("手机号");
-	$table->string("email",30)->comment("邮箱");
-	$table->integer("notices")->comment("通知次数");
+	$table->string("name",20)->nullable()->comment("姓名");
+	$table->string("mobile",11)->nullable()->comment("手机号");
+	$table->string("email",30)->nullable()->comment("邮箱");
+	$table->integer("notices")->nullable()->comment("通知次数");
 	$table->datetime("viewtime")->nullable()->comment("打开时间");
 	$table->string("ip",20)->nullable()->comment("用户ip");
 	$table->string("UserAgent",200)->nullable()->comment("用户UserAgent");
@@ -607,6 +623,24 @@ $control->create("examine_users",function($table){
 	$table->datetime("createtime")->comment("创建时间");
 	$table->integer("creater")->comment("创建人");
 	$table->comment("上传问卷评测人员");
+});
+
+//推送通知
+$control->create("examine_notice",function($table){
+	$table->integer("id")->unsigned()->increments();
+	$table->integer("examineid")->comment("所属问题");
+	$table->integer("sendType")->nullable()->comment("下发对象 1:全部参与者,2:未完成,3:未打开");
+	$table->tinyInt("isAtonce")->nullable()->comment("是否立刻推送");
+	$table->datetime("noticeTime")->nullable()->comment("推送时间");
+	$table->tinyInt("mailNotice")->nullable()->comment("邮件通知");
+	$table->tinyInt("smsNotice")->nullable()->comment("短信通知");
+	$table->string("templateCode",20)->nullable()->comment("模板编号");
+	$table->string("sender",20)->nullable()->comment("发件人");
+	$table->string("title",100)->nullable()->comment("标题");
+	$table->text("content")->nullable()->comment("内容");
+	$table->datetime("createtime")->comment("创建时间");
+	$table->integer("creater")->comment("创建人");
+	$table->comment("推送通知");
 });
 
 
