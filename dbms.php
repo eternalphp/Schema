@@ -132,6 +132,7 @@ $control->create("project",function($table){
 //问卷管理
 $control->create("examine",function($table){
 	$table->integer("examineid")->unsigned()->increments();
+	$table->char("uuid",36)->comment("uuid");
 	$table->string("code",20)->comment("问卷编号");
 	$table->string("pcode",20)->comment("问卷编号");
 	$table->integer("projectid")->comment("所属项目");
